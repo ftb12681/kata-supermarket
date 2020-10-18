@@ -45,9 +45,26 @@ public class Checkout implements CheckoutInterface {
 	 */
 	@Override
 	public double getTotalPrice() throws IllegalStateException {
-		double priceToReturn = 0d;
-		if (null == this.pricingRules)
+		if (null == pricingRules)
 			throw new IllegalStateException("PricingRules are missing");
+		double priceToReturn = 0d;
+
+		if (0 == scannedArticles.size())
+			return 0d;
+
+		for (Character articleName : scannedArticles.keySet()) {
+			Integer remainingArticles = scannedArticles.get(articleName);
+			while (remainingArticles > 0) {
+				InterimResult ir;
+				try {
+					ir = pricingRules.getPriceForNEqualItems(articleName, remainingArticles);
+				} catch (IllegalArgumentException iae) {
+					throw new IllegalStateException(iae.getMessage());
+				}
+				priceToReturn += ir.getCalculatedPrice();
+				remainingArticles = ir.getRemainingCount();
+			}
+		}
 		return priceToReturn;
 	}
 
