@@ -38,17 +38,17 @@ public class PricingRules implements PricingRulesInterface {
 	@Override
 	public InterimResult getPriceForNEqualItems(char articleName, int articleCount) {
 
-		// We try finding a PricingRuleValueObject by iterating through all
-		// PricingRuleValueObjects which matches the article names and has the largest
-		// possible package size.
+		// We try to find a PricingRuleValueObjects for the given article name with
+		// the largest possible package size.
 		// We use a helper value 'largestCount' which initially has the same value as
 		// articleCount and which will be reduced by -1 in each iteration.
-		// If such a PricingRuleValueObject exist, we return a new InterimResult object
-		// which has the package price of that Pricing Rule and a remaining count of
-		// (articleCount - largestCount).
+		// If a PricingRuleValueObject for the given articleName and a package size >=0
+		// exist, then we return a new InterimResult object which has the package price
+		// of that Pricing Rule and a remaining count of (articleCount - largestCount).
+		//
 		// Otherwise we return an IllegalArgumentException as the pricingRulesList does
-		// not contain any pricing rules for the given articleName and
-		// a package size of <= articleCount.
+		// not contain any pricing rules for the given articleName and a package size
+		// equal or smaller than 'articleCount'.
 
 		int largestCount = articleCount;
 		while (largestCount > 0) {
