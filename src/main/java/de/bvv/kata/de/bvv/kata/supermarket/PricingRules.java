@@ -25,7 +25,10 @@ public class PricingRules implements PricingRulesInterface {
 	 */
 	@Override
 	public boolean isPriceAvailableFor(char articleName) {
-		// ...
+		for (PricingRuleValueObject pricingRule : pricingRulesList) {
+			if (articleName == pricingRule.getArticleName())
+				return true;
+		}
 		return false;
 	}
 
