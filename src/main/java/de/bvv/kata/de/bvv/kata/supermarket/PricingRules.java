@@ -1,6 +1,9 @@
 package de.bvv.kata.de.bvv.kata.supermarket;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Die Klasse implementiert Funktionalitäten auf Basis des Interfaces
@@ -72,8 +75,31 @@ public class PricingRules implements PricingRulesInterface {
 	 */
 	@Override
 	public void checkConsistency() throws IllegalStateException {
-		if (null == pricingRulesList)
-			throw new IllegalStateException("pricingRulesList are not set");
+
+		// 1) pricingRulesList must not be null or empty
+		if (null == pricingRulesList || 0 == pricingRulesList.size())
+			throw new IllegalStateException("pricingRulesList is not set or empty");
+
+		// 2) The pricingRulesList must not contain several entries with the same
+		// articleName and same package size, but with a different price. (Same price
+		// can be tolerated)
+		// To guarantee that, the following code uses a Map<String, Double> with the
+		// articleName/packageSize tuple as the key and the packagePrice as the value.
+		// When adding all articleName/packageSize tuples into the map
+		// a IllegalStateException will be thrown if an entry with the same key but
+		// different value exists.
+		Map<String, Double> pricingRulesMap = new HashMap<String, Double>();
+		for (PricingRuleValueObject pricingRule : pricingRulesList) {
+			String key = pricingRule.getArticleName() + "/" + pricingRule.getPackageSize();
+			Double price = pricingRule.getPackagePrice();
+
+			if (pricingRulesMap.containsKey(key) && !pricingRulesMap.get(key).equals(price)) {
+				throw new IllegalStateException(
+						String.format("Pricing Rules contain two prices for articleName=%s and packageSize=%d",
+								pricingRule.getArticleName(), pricingRule.getPackageSize()));
+			}
+			pricingRulesMap.put(key, price);
+		}
 	}
 
 	/**
