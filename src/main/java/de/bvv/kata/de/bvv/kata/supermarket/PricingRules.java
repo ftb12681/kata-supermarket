@@ -48,7 +48,7 @@ public class PricingRules implements PricingRulesInterface {
 	@Override
 	public void checkConsistency() throws IllegalStateException {
 		if (null == pricingRulesList)
-			throw new IllegalStateException("nix implementiert");
+			throw new IllegalStateException("pricingRulesList are not set");
 	}
 
 	/**
